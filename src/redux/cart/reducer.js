@@ -1,5 +1,8 @@
 import CartActionTypes from "./action-types";
 
+//criando um reducer SEM USAR O TOOLKIT.
+//este reducer não está sendo utilizado em nenhum arquivo, o reducer utilizado é o com o toolkit, no arquivo "slice.js"
+
 const initialState = {
   products: [],
 };
@@ -7,6 +10,28 @@ const initialState = {
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case CartActionTypes.ADD_PRODUCT:
+      // verificar se o produto já está no carrinho
+      const productIsAlredyInCart = state.products.some(
+        (product) => product.id === action.payload.id
+      );
+
+      // se ele estiver, aumentar sua quantidade em 1
+      if (productIsAlredyInCart) {
+        return {
+          ...state,
+          products: state.products.map((product) =>
+            product.id === action.payload.id
+              ? { ...product, quantity: product.quantity + 1 }
+              : product
+          ),
+        };
+      }
+
+      // se ele não estiver, adicioná-lo
+      return {
+        ...state,
+        products: [...state.products, { ...action.payload, quantity: 1 }],
+      };
 
     case CartActionTypes.REMOVE_PRODUCT:
       return {
